@@ -1,0 +1,45 @@
+import { Selector, ClientFunction } from 'testcafe';
+
+// Define the URL of your SDLMS login page
+const loginPageURL = 'https://your-sdlms-application.com/login';
+
+// Test for Chrome
+fixture`User Login - Chrome`.page(loginPageURL).beforeEach(async (t) => {
+    await t.maximizeWindow(); // Maximize the browser window for better visibility
+});
+
+test('Successful Login on Chrome', async (t) => {
+    await t
+        .typeText('#username', 'your_valid_username')
+        .typeText('#password', 'your_valid_password')
+        .click('#login-button')
+        .expect(Selector('#dashboard').exists).ok();
+});
+
+// Test for Firefox
+fixture`User Login - Firefox`.page(loginPageURL).beforeEach(async (t) => {
+    await t.maximizeWindow(); // Maximize the browser window for better visibility
+}).before(async () => {
+    // Use a custom function to force Firefox to accept untrusted certificates
+    await runFirefoxWithUntrustedCertificate();
+});
+
+test('Successful Login on Firefox', async (t) => {
+    await t
+        .typeText('#username', 'your_valid_username')
+        .typeText('#password', 'your_valid_password')
+        .click('#login-button')
+        .expect(Selector('#dashboard').exists).ok();
+});
+
+// Custom function to run Firefox with untrusted certificates (only for testing purposes)
+const runFirefoxWithUntrustedCertificate = ClientFunction(() => {
+    const { Components } = require('testcafe-browser-tools');
+    const profilePath = Components.getProfileDir();
+    const preferences = Components.getPreferences(profilePath);
+    preferences.setPref('browser.ssl_override_behavior', 1);
+    preferences.setPref('browser.tabs.remote.autostart', false);
+    preferences.setPref('browser.tabs.remote.autostart.2', false);
+    Components.writePreferences(profilePath, preferences);
+});
+
