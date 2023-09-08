@@ -1,0 +1,12 @@
+import { Selector } from 'testcafe';
+
+fixture`User Login`.page`https://your-sdlms-application.com/login`;
+
+test('Redirect to Dashboard on Successful Login', async (t) => {
+    await t
+        .typeText('#username', 'your_valid_username')
+        .typeText('#password', 'your_valid_password')
+        .click('#login-button')
+        .expect(Selector('#dashboard').exists).ok()
+        .expect(Selector('#dashboard').innerText).eql('Welcome to the Dashboard');
+});
