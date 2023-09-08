@@ -1,0 +1,11 @@
+import { Selector } from 'testcafe';
+
+fixture`User Login`.page`https://your-sdlms-application.com/login`;
+
+test('Validate Error Messages for Invalid Login Attempts', async (t) => {
+    await t
+        .typeText('#username', 'invalid_username')
+        .typeText('#password', 'invalid_password')
+        .click('#login-button')
+        .expect(Selector('#error-message').innerText).eql('Invalid credentials');
+});
